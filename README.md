@@ -89,14 +89,6 @@ The app uses the Escuelajs API for backend services:
 - **HTTP**: For API calls
 - **Material Design**: UI components
 
-## 📝 License
+## 📷 Images
 
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests.
-
-## 📞 Support
-
-For support, please open an issue on the repository.
+![alt text](<Screenshot (1241).png>) ![alt text](<Screenshot (1242).png>) ![alt text](<Screenshot (1243).png>) ![alt text](<Screenshot (1244).png>) ![alt text](<Screenshot (1245).png>) ![alt text](<Screenshot (1246).png>)
