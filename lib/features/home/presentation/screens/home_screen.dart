@@ -1,4 +1,7 @@
+import 'package:e_commerce_app/features/home/data/api/products_api.dart';
+import 'package:e_commerce_app/features/home/data/models/product_model.dart';
 import 'package:e_commerce_app/features/home/presentation/widgets/product_card.dart';
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,17 +9,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> dummyProducts = List.generate(
-      10,
-      (index) => {
-        'id': index,
-        'title': 'Product ${index + 1}',
-        'description': 'Modern design for daily life',
-        'price': (index + 1) * 20.0,
-        'image': 'https://via.placeholder.com/150',
-      },
-    );
-
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
@@ -24,19 +16,19 @@ class HomeScreen extends StatelessWidget {
         elevation: 0,
         toolbarHeight: 80,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 Text(
-                  'Welcome,',
+                  "Welcome,",
                   style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
                 ),
                 const Text(
-                  'Our Shop',
+                  "Our Shop",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     fontSize: 22,
                     color: Colors.black,
                   ),
@@ -45,8 +37,8 @@ class HomeScreen extends StatelessWidget {
             ),
             Container(
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.blue.withValues(alpha: 0.1),
+                borderRadius: .circular(12),
               ),
               child: IconButton(
                 icon: const Icon(Icons.notifications_none, color: Colors.blue),
@@ -59,17 +51,16 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Search Bar
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const .all(16.0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const .symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: .circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -77,33 +68,30 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: const TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search products...',
+                    hintText: "Search products...",
                     border: InputBorder.none,
                     icon: Icon(Icons.search, color: Colors.blue),
                   ),
                 ),
               ),
             ),
-            // Categories
+
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              scrollDirection: .horizontal,
+              padding: const .symmetric(horizontal: 16),
               child: Row(
-                children: ['All', 'Shoes', 'Shirts', 'Tech', 'Home'].map((cat) {
-                  bool isAll = cat == 'All';
+                children: ["All", "Shoes", "Shirts", "Tech", "Home"].map((cat) {
+                  bool isAll = cat == "All";
                   return Container(
-                    margin: const EdgeInsets.only(right: 12),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
+                    margin: const .only(right: 12),
+                    padding: const .symmetric(horizontal: 20, vertical: 10),
                     decoration: BoxDecoration(
                       color: isAll ? Colors.blue : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: .circular(12),
                       boxShadow: [
                         if (!isAll)
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 5,
                           ),
                       ],
@@ -112,36 +100,54 @@ class HomeScreen extends StatelessWidget {
                       cat,
                       style: TextStyle(
                         color: isAll ? Colors.white : Colors.grey.shade700,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: .bold,
                       ),
                     ),
                   );
                 }).toList(),
               ),
             ),
-            // Products Grid
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.7,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemCount: dummyProducts.length,
-                itemBuilder: (context, index) {
-                  final product = dummyProducts[index];
-                  return ProductCard(
-                    title: product['title'],
-                    price: product['price'],
-                    description: product['description'],
-                    image: product['image'],
+
+            FutureBuilder<List<ProductModel>>(
+              future: ProductsApi().getAllProducts(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == .waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError || snapshot.data == null) {
+                  return const Center(
+                    child: Text(
+                      "Error",
+                      style: TextStyle(fontSize: 25, color: Colors.red),
+                    ),
                   );
-                },
-              ),
+                }
+                List<ProductModel> products = snapshot.data!;
+                return Padding(
+                  padding: const .all(16.0),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.7,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return ProductCard(
+                        title: product.title!,
+                        price: product.price!,
+                        description: product.description!,
+                        image: product.images![0],
+                      );
+                    },
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 20),
           ],

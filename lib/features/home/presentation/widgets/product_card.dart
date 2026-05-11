@@ -19,42 +19,71 @@ class ProductCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: .circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: Colors.blue.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           Expanded(
             child: Container(
-              width: double.infinity,
+              width: .infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Colors.blue.shade50, Colors.blue.shade100],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  begin: .topLeft,
+                  end: .bottomRight,
                 ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const .vertical(top: .circular(20)),
               ),
               child: Stack(
                 children: [
-                  const Center(child: Icon(Icons.shopping_bag_outlined, size: 40, color: Colors.blue)),
+                  Center(
+                    child: Expanded(
+                      child: ClipRRect(
+                        borderRadius: .circular(10),
+                        child: Image.network(
+                          image,
+
+                          fit: .cover,
+                          width: .infinity,
+
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const CircularProgressIndicator();
+                          },
+
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.broken_image,
+                              size: 40,
+                              color: Colors.grey,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
                   PositionBag(
                     top: 10,
                     right: 10,
                     child: Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: const .all(6),
                       decoration: const BoxDecoration(
                         color: Colors.white,
-                        shape: BoxShape.circle,
+                        shape: .circle,
                       ),
-                      child: const Icon(Icons.favorite_border, size: 18, color: Colors.red),
+                      child: const Icon(
+                        Icons.favorite_border,
+                        size: 18,
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                 ],
@@ -62,42 +91,46 @@ class ProductCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const .all(12.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: .start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(fontWeight: .bold, fontSize: 16),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow: .ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
                   style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                   maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  overflow: .ellipsis,
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: .spaceBetween,
                   children: [
                     Text(
                       '\$$price',
                       style: const TextStyle(
                         color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: .bold,
                         fontSize: 18,
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: const .all(4),
                       decoration: BoxDecoration(
                         color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: .circular(8),
                       ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 20),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
                   ],
                 ),

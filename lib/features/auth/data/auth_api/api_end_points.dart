@@ -1,12 +1,15 @@
 class ApiEndPoints {
-  static String baseUrl = "https://api.escuelajs.co/api/v1/";
-  static String login = "auth/login";
-  static String signup = "users/";
+  static const String baseUrl = "https://api.escuelajs.co/api/v1/";
+  static const String login = "auth/login";
+  static const String signup = "users/";
+  static const String profile = "auth/profile";
+  static const String allProduct = "products/";
+  static const String allCategories = "categories/";
 }
 
 class ApiKeys {
-  static String email = "email";
-  static String password = "password";
-  static String name = "name";
-  static String avatar = "avatar";
+  static const String email = "email";
+  static const String password = "password";
+  static const String name = "name";
+  static const String avatar = "avatar";
 }
