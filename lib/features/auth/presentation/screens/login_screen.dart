@@ -1,6 +1,5 @@
-import 'package:e_commerce_app/features/auth/data/auth_api/auth_api.dart';
 import 'package:e_commerce_app/features/auth/presentation/screens/signup_screen.dart';
-import 'package:e_commerce_app/features/home/presentation/screens/home_screen.dart';
+import 'package:e_commerce_app/features/main_wrapper/presentation/screens/main_wrapper.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,39 +22,12 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        setState(() {
-          isLoading = true;
-        });
-        await AuthApi().login(
-          email: _emailController.text,
-          password: _passwordController.text,
-        );
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Logged In")));
-        Navigator.of(
-          context,
-        ).pushReplacement(MaterialPageRoute(builder: (_) => HomeScreen()));
-      } catch (e) {
-        setState(() {
-          isLoading = false;
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(e.toString())));
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: .infinity,
-        height: .infinity,
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -128,7 +100,33 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: isLoading ? null : _login,
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                setState(() {
+                                  isLoading = true;
+                                });
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Loggid in")),
+                                );
+
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (_) => MainWrapper(),
+                                  ),
+                                );
+                              } catch (error) {
+                                setState(() {
+                                  isLoading = false;
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(error.toString())),
+                                  );
+                                });
+                              }
+                            }
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,

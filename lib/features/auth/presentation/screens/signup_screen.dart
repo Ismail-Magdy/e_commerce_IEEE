@@ -1,4 +1,3 @@
-import 'package:e_commerce_app/features/auth/data/auth_api/auth_api.dart';
 import 'package:e_commerce_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +13,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _avatarController = TextEditingController();
   bool isLoading = false;
 
   @override
@@ -22,35 +20,30 @@ class _SignupScreenState extends State<SignupScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _avatarController.dispose();
     super.dispose();
   }
 
   void _signup() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
       try {
-        setState(() {
-          isLoading = true;
-        });
-        await AuthApi().signUp(
-          name: _nameController.text,
-          email: _emailController.text,
-          password: _passwordController.text,
-          avatar: _avatarController.text,
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Account Created Successfully")),
         );
-        ScaffoldMessenger.of(
+
+        Navigator.pushReplacement(
           context,
-        ).showSnackBar(SnackBar(content: Text("Signed Up")));
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => LoginScreen()));
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
       } catch (e) {
         setState(() {
           isLoading = false;
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(e.toString())));
         });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
@@ -139,29 +132,8 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         obscureText: true,
                         validator: (value) {
-                          if (value == null || value.length < 4) {
-                            return 'Password must be at least 4 characters';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _avatarController,
-                        decoration: InputDecoration(
-                          labelText: 'Avatar URL',
-                          prefixIcon: const Icon(Icons.image),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Avatar URL is required';
-                          }
-                          if (!value.startsWith('http://') &&
-                              !value.startsWith('https://')) {
-                            return 'Avatar must be a valid URL';
+                          if (value == null || value.length < 6) {
+                            return 'Password must be at least 6 characters';
                           }
                           return null;
                         },
