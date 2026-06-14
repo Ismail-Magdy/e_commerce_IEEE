@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/core/fire_base/fire_base_auth.dart';
 import 'package:e_commerce_app/features/auth/presentation/screens/signup_screen.dart';
 import 'package:e_commerce_app/features/main_wrapper/presentation/screens/main_wrapper.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+  final FireBaseAuth _firebaseAuth = FireBaseAuth();
 
   @override
   void dispose() {
@@ -100,33 +102,64 @@ class _LoginScreenState extends State<LoginScreen> {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              try {
-                                setState(() {
-                                  isLoading = true;
-                                });
+                          onPressed: isLoading
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
 
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Loggid in")),
-                                );
+                                    try {
+                                      bool loginSuccess = await _firebaseAuth
+                                          .login(
+                                            _emailController.text.trim(),
+                                            _passwordController.text.trim(),
+                                          );
 
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (_) => MainWrapper(),
-                                  ),
-                                );
-                              } catch (error) {
-                                setState(() {
-                                  isLoading = false;
+                                      if (loginSuccess) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              "Logged in successfully",
+                                            ),
+                                          ),
+                                        );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(error.toString())),
-                                  );
-                                });
-                              }
-                            }
-                          },
+                                        Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                            builder: (_) => MainWrapper(),
+                                          ),
+                                        );
+                                      } else {
+                                        setState(() {
+                                          isLoading = false;
+                                        });
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text("Login failed"),
+                                          ),
+                                        );
+                                      }
+                                    } catch (error) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(error.toString()),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -135,7 +168,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           child: isLoading
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                )
                               : const Text(
                                   'Login',
                                   style: TextStyle(fontSize: 18),

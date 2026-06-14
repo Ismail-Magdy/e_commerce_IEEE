@@ -1,3 +1,4 @@
+import 'package:e_commerce_app/core/fire_base/fire_base_auth.dart';
 import 'package:e_commerce_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool isLoading = false;
+  final FireBaseAuth _firebaseAuth = FireBaseAuth();
 
   @override
   void dispose() {
@@ -29,14 +31,29 @@ class _SignupScreenState extends State<SignupScreen> {
         isLoading = true;
       });
       try {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Account Created Successfully")),
+        bool signupSuccess = await _firebaseAuth.signUp(
+          _nameController.text.trim(),
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
         );
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
+        if (signupSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Account Created Successfully")),
+          );
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text("Sign up failed")));
+        }
       } catch (e) {
         setState(() {
           isLoading = false;
@@ -152,7 +169,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             ),
                           ),
                           child: isLoading
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                )
                               : const Text(
                                   'Sign Up',
                                   style: TextStyle(fontSize: 18),
